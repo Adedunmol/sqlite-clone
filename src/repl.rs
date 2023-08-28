@@ -1,5 +1,5 @@
 use std::{io::{self, Write}, process};
-use crate::{Result};
+use crate::{Result, commands::{MetaCommandResult, Statement, StatementType, PrepareResult}};
 
 pub struct InputBuffer {
     pub buffer: String,
@@ -41,4 +41,29 @@ impl InputBuffer {
         &self.buffer.trim()
     }
 
+    pub fn do_meta_command(&self) -> MetaCommandResult {
+        if self.get_buffer() == ".exit" {
+
+            process::exit(0);
+        } else {
+
+            MetaCommandResult::MetaCommandUnrecognizedCommand
+        }
+    }
+
+    pub fn prepare_statement(&self, statement: &mut Statement) -> PrepareResult {
+
+        if self.get_buffer().starts_with("insert") {
+            statement.statement_type = StatementType::StatementInsert;
+
+            return PrepareResult::PrepareSuccess;
+        }
+        if self.get_buffer() == "select" {
+            statement.statement_type = StatementType::StatementSelect;
+
+            return PrepareResult::PrepareSuccess;
+        }
+
+        PrepareResult::PrepareUnrecognizedStatement      
+    }
 }
