@@ -38,9 +38,7 @@ fn main() {
         let result = input_buffer.prepare_statement(&mut statement);
         
         if let commands::PrepareResult::PrepareSuccess = result {
-            statement.execute_statement();
-            println!("Executed.");
-            continue;
+            // continue;
         } else if let commands::PrepareResult::PrepareUnrecognizedStatement = result {
             println!("Unrecognized keyword at the start of \"{}\".", input_buffer.get_buffer());
             continue;
