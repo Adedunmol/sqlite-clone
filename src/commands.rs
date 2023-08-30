@@ -1,12 +1,14 @@
-
+use crate::tables::Row;
 pub enum MetaCommandResult {
     MetaCommandSuccess,
     MetaCommandUnrecognizedCommand
 }
 
+#[derive(Debug)]
 pub enum PrepareResult {
     PrepareSuccess,
-    PrepareUnrecognizedStatement
+    PrepareUnrecognizedStatement,
+    PrepareSyntaxError
 }
 
 pub enum StatementType {
@@ -16,7 +18,8 @@ pub enum StatementType {
 }
 
 pub struct Statement {
-    pub statement_type: StatementType 
+    pub statement_type: StatementType,
+    pub row_to_insert: Row
 }
 
 impl Statement {

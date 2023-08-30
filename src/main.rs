@@ -3,11 +3,15 @@ use std::process;
 use commands::Statement;
 use repl::InputBuffer;
 
+use crate::tables::Row;
+
 mod repl;
 mod commands;
+mod tables;
 
 pub type Err = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Err>;
+
 
 fn main() {
     let mut input_buffer = InputBuffer::new();
@@ -34,10 +38,12 @@ fn main() {
             }
         }
 
-        let mut statement = Statement { statement_type: commands::StatementType::None };
+        let test_row = Row { id: 1, email: "test@test.com".to_string(), username: "test".to_string() };
+        let mut statement = Statement { statement_type: commands::StatementType::None, row_to_insert: test_row };
         let result = input_buffer.prepare_statement(&mut statement);
-        
+
         if let commands::PrepareResult::PrepareSuccess = result {
+            println!("working");
             // continue;
         } else if let commands::PrepareResult::PrepareUnrecognizedStatement = result {
             println!("Unrecognized keyword at the start of \"{}\".", input_buffer.get_buffer());

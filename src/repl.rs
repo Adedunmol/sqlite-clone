@@ -55,6 +55,19 @@ impl InputBuffer {
 
         if self.get_buffer().starts_with("insert") {
             statement.statement_type = StatementType::StatementInsert;
+            let input = self.get_buffer();
+
+            match sscanf::sscanf!(input, "insert {usize} {str} {str}") {
+                Ok((id, username, email)) => {
+                    statement.row_to_insert.id = id as u32;
+                    statement.row_to_insert.username = username.to_string();
+                    statement.row_to_insert.email = email.to_string();
+                    
+                },
+                Err(_err) => { 
+                    return PrepareResult::PrepareSyntaxError
+                }
+            } 
 
             return PrepareResult::PrepareSuccess;
         }
