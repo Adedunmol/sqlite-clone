@@ -26,7 +26,7 @@ impl InputBuffer {
     pub fn read_input(&mut self) -> Result<()> {
         let bytes_read = io::stdin().read_line(&mut self.buffer)?;
 
-        if bytes_read <= 0 {
+        if bytes_read == 0 {
             eprintln!("Error reading input\n");
             process::exit(1);
         }
@@ -38,7 +38,7 @@ impl InputBuffer {
 
     pub fn get_buffer(&self) -> &str {
 
-        &self.buffer.trim()
+        self.buffer.trim()
     }
 
     pub fn do_meta_command(&self) -> MetaCommandResult {

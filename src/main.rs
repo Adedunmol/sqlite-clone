@@ -26,7 +26,7 @@ fn main() {
             process::exit(1);
         });
 
-        if input_buffer.get_buffer().starts_with(".") {
+        if input_buffer.get_buffer().starts_with('.') {
             match input_buffer.do_meta_command() {
                 commands::MetaCommandResult::MetaCommandSuccess => {
                     continue;

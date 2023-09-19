@@ -1,0 +1,4 @@
+
+run () {
+	cargo run
+}
