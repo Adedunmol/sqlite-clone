@@ -38,7 +38,10 @@ fn main() {
             }
         }
 
-        let test_row = Row { id: 1, email: "test@test.com".to_string(), username: "test".to_string() };
+        let test_row = Row { id: 1, email: "test@test.com".as_bytes().try_into().unwrap_or_else(|err| {
+            println!("{}", err);
+            process::exit(0);
+        }), username: "test".as_bytes().try_into().unwrap() };
         let mut statement = Statement { statement_type: commands::StatementType::None, row_to_insert: test_row };
         let result = input_buffer.prepare_statement(&mut statement);
 
