@@ -1,3 +1,5 @@
+use crate::Result;
+
 
 const ID_SIZE: u32 = 4;
 const USERNAME_SIZE: u32 = 32;
@@ -9,23 +11,49 @@ const ROW_SIZE: u32 = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 
 pub struct Row {
     pub id: u32,
-    pub username: [u8; 32],
-    pub email: [u8; 255],
+    pub username: String,
+    pub email: String,
 }
 
 impl Row {
 
-    pub fn serialize_row(&self, destination: &mut [u8]) {
+    pub fn new(id: u32, username: &str, email: &str) -> Result<Self> {
+        
+        if username.len() > 32 {
+            return Err("username is longer than 32".into())
+        }
+        
+        if email.len() > 255 {
+            return Err("email is longer than 255".into())
+        }
 
-        destination[ID_OFFSET as usize..ID_SIZE as usize].copy_from_slice(&self.id.to_be_bytes());
-        destination[USERNAME_OFFSET as usize..USERNAME_SIZE as usize].copy_from_slice(&self.username);
-        destination[EMAIL_OFFSET as usize..EMAIL_SIZE as usize].copy_from_slice(&self.email);
+        Ok( Self { id, username: username.to_string(), email: email.to_string() } )
     }
 
-    pub fn deserialize_row(&mut self, source: &[u8]) {
+    pub fn serialize_row(&self, destination: &mut [u8]) -> Result<()> {
 
-        let _ = &mut self.id.to_be_bytes().copy_from_slice(&source[ID_OFFSET as usize..ID_SIZE as usize]);
-        self.username.copy_from_slice(&source[USERNAME_OFFSET as usize..USERNAME_SIZE as usize]);
-        self.email.copy_from_slice(&source[EMAIL_OFFSET as usize..EMAIL_SIZE as usize])
+        if destination.len() < ROW_SIZE as usize {
+            return Err("destination buffer is too small".into())
+        }
+
+        destination[ID_OFFSET as usize..ID_SIZE as usize].copy_from_slice(&self.id.to_be_bytes());
+        destination[USERNAME_OFFSET as usize..USERNAME_SIZE as usize].copy_from_slice(self.username.as_bytes());
+        destination[EMAIL_OFFSET as usize..EMAIL_SIZE as usize].copy_from_slice(self.email.as_bytes());
+    
+        Ok(())
+    }
+
+    pub fn deserialize_row(&mut self, source: &[u8]) -> Result<Self> {
+
+        if source.len() < ROW_SIZE as usize {
+            return Err("cannot deserialize row".into())
+        }
+
+        let id = u32::from_le_bytes(source[ID_OFFSET as usize..ID_OFFSET as usize + ID_SIZE as usize].try_into().unwrap());
+        let username = String::from_utf8_lossy(&source[USERNAME_OFFSET as usize..USERNAME_OFFSET as usize + USERNAME_SIZE as usize]).to_string(); // .trim_end_matches(char::from(0)).
+        let email = String::from_utf8_lossy(&source[EMAIL_OFFSET as usize..EMAIL_OFFSET as usize + EMAIL_SIZE as usize]).to_string(); // .trim_end_matches(char::from(0)).
+
+
+        Ok( Self { id, username, email } )
     }
 }

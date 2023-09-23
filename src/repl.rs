@@ -60,8 +60,8 @@ impl InputBuffer {
             match sscanf::sscanf!(input, "insert {usize} {str} {str}") {
                 Ok((id, username, email)) => {
                     statement.row_to_insert.id = id as u32;
-                    statement.row_to_insert.username = username.as_bytes().try_into().unwrap();
-                    statement.row_to_insert.email = email.as_bytes().try_into().unwrap();
+                    statement.row_to_insert.username = username.to_string();
+                    statement.row_to_insert.email = email.to_string();
                     
                 },
                 Err(_err) => { 
