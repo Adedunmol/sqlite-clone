@@ -1,12 +1,13 @@
 use std::process;
 
-use commands::Statement;
+use commands::{Statement, ExecuteResult};
 use repl::InputBuffer;
 
-use crate::tables::Row;
+use crate::rows::Row;
 
 mod repl;
 mod commands;
+mod rows;
 mod tables;
 
 pub type Err = Box<dyn std::error::Error>;
@@ -38,7 +39,7 @@ fn main() {
             }
         }
 
-        let test_row = Row::new(1, "test@test.com", "test").unwrap();
+        let test_row = Row::new(1, "", "").unwrap();
         let mut statement = Statement { statement_type: commands::StatementType::None, row_to_insert: test_row };
         let result = input_buffer.prepare_statement(&mut statement);
 
@@ -48,9 +49,29 @@ fn main() {
         } else if let commands::PrepareResult::PrepareUnrecognizedStatement = result {
             println!("Unrecognized keyword at the start of \"{}\".", input_buffer.get_buffer());
             continue;
+        } else if let commands::PrepareResult::PrepareSyntaxError = result {
+            println!("Syntax error. Could not parse statement.\r");
+            continue;
         }
 
-        statement.execute_statement();
-        println!("Executed.");
+        let table = tables::Table::new();
+
+        let statement_result = statement.execute_insert(table);
+
+        if let ExecuteResult::ExecuteSuccess = statement_result {
+            println!("Executed\r\n");
+            break;
+        }
+
+        // match statement.execute_statement() {
+        //     ExecuteResult::ExecuteSuccess => {
+        //         println!("Executed\r\n");
+        //         break;
+        //     },
+        //     ExecuteResult::ExecuteTableFull => {
+
+        //     }
+        // }
+        // println!("Executed.");
     }
 }

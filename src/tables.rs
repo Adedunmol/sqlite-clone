@@ -1,59 +1,41 @@
-use crate::Result;
+use crate::rows::{ROW_SIZE, Row};
 
 
-const ID_SIZE: u32 = 4;
-const USERNAME_SIZE: u32 = 32;
-const EMAIL_SIZE: u32 = 255;
-const ID_OFFSET: u32 = 0;
-const USERNAME_OFFSET: u32 = ID_OFFSET + ID_SIZE;
-const EMAIL_OFFSET: u32 = USERNAME_OFFSET + USERNAME_SIZE;
-const ROW_SIZE: u32 = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
+const PAGE_SIZE: u32 = 4096;
+const TABLE_MAX_PAGES: u32 = 100;
+const ROWS_PER_PAGE: u32 = PAGE_SIZE / ROW_SIZE;
+pub const TABLE_MAX_ROWS: u32 = ROWS_PER_PAGE * TABLE_MAX_PAGES;
 
-pub struct Row {
-    pub id: u32,
-    pub username: String,
-    pub email: String,
+pub struct Table {
+    pub num_rows: u32,
+    pages: Vec<Box<[u8; PAGE_SIZE as usize]>>
 }
 
-impl Row {
+impl Table {
 
-    pub fn new(id: u32, username: &str, email: &str) -> Result<Self> {
-        
-        if username.len() > 32 {
-            return Err("username is longer than 32".into())
-        }
-        
-        if email.len() > 255 {
-            return Err("email is longer than 255".into())
+    pub fn new() -> Self {
+        let num_rows = 0;
+        let mut pages: Vec<Box<[u8; PAGE_SIZE as usize]>> = vec![];
+
+        for _ in 0..TABLE_MAX_PAGES {
+            pages.push(Box::new([0u8; PAGE_SIZE as usize]))
         }
 
-        Ok( Self { id, username: username.to_string(), email: email.to_string() } )
+        Self { num_rows, pages }
     }
 
-    pub fn serialize_row(&self, destination: &mut [u8]) -> Result<()> {
+    pub fn row_slot(&mut self, row_num: u32) -> &mut [u8] {
+        let page_num: usize = (row_num / ROWS_PER_PAGE).try_into().unwrap();
+        let mut page = &self.pages[page_num];
 
-        if destination.len() < ROW_SIZE as usize {
-            return Err("destination buffer is too small".into())
-        }
+        // if page.is_none() {
+        //     page = &Some(Box::new([0u8; PAGE_SIZE as usize]));
+        //     self.pages[page_num] = page.clone();
+        // }
 
-        destination[ID_OFFSET as usize..ID_SIZE as usize].copy_from_slice(&self.id.to_be_bytes());
-        destination[USERNAME_OFFSET as usize..USERNAME_SIZE as usize].copy_from_slice(self.username.as_bytes());
-        destination[EMAIL_OFFSET as usize..EMAIL_SIZE as usize].copy_from_slice(self.email.as_bytes());
-    
-        Ok(())
-    }
-
-    pub fn deserialize_row(&mut self, source: &[u8]) -> Result<Self> {
-
-        if source.len() < ROW_SIZE as usize {
-            return Err("cannot deserialize row".into())
-        }
-
-        let id = u32::from_le_bytes(source[ID_OFFSET as usize..ID_OFFSET as usize + ID_SIZE as usize].try_into().unwrap());
-        let username = String::from_utf8_lossy(&source[USERNAME_OFFSET as usize..USERNAME_OFFSET as usize + USERNAME_SIZE as usize]).to_string(); // .trim_end_matches(char::from(0)).
-        let email = String::from_utf8_lossy(&source[EMAIL_OFFSET as usize..EMAIL_OFFSET as usize + EMAIL_SIZE as usize]).to_string(); // .trim_end_matches(char::from(0)).
-
-
-        Ok( Self { id, username, email } )
+        let row_offset: u32 = row_num % ROWS_PER_PAGE;
+        let byte_offset: u32 = row_offset * ROW_SIZE;
+        
+        &mut self.pages[page_num][byte_offset as usize..(byte_offset + ROW_SIZE) as usize]
     }
 }
