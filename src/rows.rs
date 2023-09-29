@@ -38,8 +38,12 @@ impl Row {
         }
 
         destination[ID_OFFSET as usize..ID_SIZE as usize].copy_from_slice(&self.id.to_be_bytes());
-        destination[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize].copy_from_slice(self.username.as_bytes());
-        destination[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize].copy_from_slice(self.email.as_bytes());
+        
+        let mut username = &mut destination[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize];
+        username[0..self.username.len()].copy_from_slice(self.username.as_bytes());
+        
+        let email = &mut destination[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize];
+        email[0..self.email.len()].copy_from_slice(self.email.as_bytes());
     
         Ok(())
     }
@@ -51,8 +55,8 @@ impl Row {
         }
 
         let id = u32::from_le_bytes(source[ID_OFFSET as usize..ID_OFFSET as usize + ID_SIZE as usize].try_into().unwrap());
-        let username = String::from_utf8_lossy(&source[USERNAME_OFFSET as usize..USERNAME_OFFSET as usize + USERNAME_SIZE as usize]).to_string(); // .trim_end_matches(char::from(0)).
-        let email = String::from_utf8_lossy(&source[EMAIL_OFFSET as usize..EMAIL_OFFSET as usize + EMAIL_SIZE as usize]).to_string(); // .trim_end_matches(char::from(0)).
+        let username = String::from_utf8_lossy(&source[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize]).to_string(); // .trim_end_matches(char::from(0)).
+        let email = String::from_utf8_lossy(&source[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize]).to_string(); // .trim_end_matches(char::from(0)).
 
 
         Ok( Self { id, username, email } )

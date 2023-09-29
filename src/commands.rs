@@ -51,7 +51,6 @@ impl Statement {
         let row_to_insert = &self.row_to_insert;
         let destination = table.row_slot(table.num_rows);
 
-        println!("{:?}", destination.len());
         let _ = row_to_insert.serialize_row(destination);
         table.num_rows += 1;
 

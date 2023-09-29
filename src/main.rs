@@ -59,8 +59,8 @@ fn main() {
         let statement_result = statement.execute_insert(table);
 
         if let ExecuteResult::ExecuteSuccess = statement_result {
-            println!("Executed\r\n");
-            break;
+            println!("Executed\r");
+            continue;
         }
 
         // match statement.execute_statement() {
