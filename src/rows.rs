@@ -1,5 +1,3 @@
-use std::io::Read;
-
 use crate::Result;
 
 const ID_SIZE: u32 = 4;
@@ -39,12 +37,14 @@ impl Row {
 
         destination[ID_OFFSET as usize..ID_SIZE as usize].copy_from_slice(&self.id.to_be_bytes());
         
-        let mut username = &mut destination[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize];
+        let username = &mut destination[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize];
         username[0..self.username.len()].copy_from_slice(self.username.as_bytes());
         
         let email = &mut destination[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize];
         email[0..self.email.len()].copy_from_slice(self.email.as_bytes());
     
+        println!("{:?}", destination.len());
+
         Ok(())
     }
 

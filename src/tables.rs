@@ -1,4 +1,4 @@
-use crate::rows::{ROW_SIZE, Row};
+use crate::rows::ROW_SIZE;
 
 
 const PAGE_SIZE: u32 = 4096;
@@ -26,7 +26,7 @@ impl Table {
 
     pub fn row_slot(&mut self, row_num: u32) -> &mut [u8] {
         let page_num: usize = (row_num / ROWS_PER_PAGE).try_into().unwrap();
-        let mut page = &self.pages[page_num];
+        let _page = &self.pages[page_num];
 
         // if page.is_none() {
         //     page = &Some(Box::new([0u8; PAGE_SIZE as usize]));
