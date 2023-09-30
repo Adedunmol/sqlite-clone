@@ -8,6 +8,7 @@ const USERNAME_OFFSET: u32 = ID_OFFSET + ID_SIZE;
 const EMAIL_OFFSET: u32 = USERNAME_OFFSET + USERNAME_SIZE;
 pub const ROW_SIZE: u32 = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 
+#[derive(Debug)]
 pub struct Row {
     pub id: u32,
     pub username: String,
@@ -43,8 +44,6 @@ impl Row {
         let email = &mut destination[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize];
         email[0..self.email.len()].copy_from_slice(self.email.as_bytes());
     
-        println!("{:?}", destination.len());
-
         Ok(())
     }
 

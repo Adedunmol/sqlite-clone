@@ -16,6 +16,7 @@ pub type Result<T> = std::result::Result<T, Err>;
 
 fn main() {
     let mut input_buffer = InputBuffer::new();
+    let mut table = tables::Table::new();
 
     loop {
         input_buffer.buffer.clear();
@@ -54,24 +55,17 @@ fn main() {
             continue;
         }
 
-        let table = tables::Table::new();
-
-        let statement_result = statement.execute_insert(table);
-
-        if let ExecuteResult::ExecuteSuccess = statement_result {
-            println!("Executed\r");
-            continue;
+        match statement.execute_statement(&mut table) {
+            ExecuteResult::ExecuteSuccess => {
+                println!("Executed\r");
+                continue;
+            },
+            ExecuteResult::ExecuteTableFull => {
+                println!("Error: Table full\r");
+                break;
+            },
+            ExecuteResult::None => ()
         }
-
-        // match statement.execute_statement() {
-        //     ExecuteResult::ExecuteSuccess => {
-        //         println!("Executed\r\n");
-        //         break;
-        //     },
-        //     ExecuteResult::ExecuteTableFull => {
-
-        //     }
-        // }
-        // println!("Executed.");
+        println!("Executed.");
     }
 }

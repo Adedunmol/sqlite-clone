@@ -8,7 +8,7 @@ pub const TABLE_MAX_ROWS: u32 = ROWS_PER_PAGE * TABLE_MAX_PAGES;
 
 pub struct Table {
     pub num_rows: u32,
-    pages: Vec<Box<[u8; PAGE_SIZE as usize]>>
+    pub pages: Vec<Box<[u8; PAGE_SIZE as usize]>>
 }
 
 impl Table {
@@ -35,7 +35,7 @@ impl Table {
 
         let row_offset: u32 = row_num % ROWS_PER_PAGE;
         let byte_offset: u32 = row_offset * ROW_SIZE;
-        
+        println!("row_off: {}, byte_offset: {}", row_offset, byte_offset);
         &mut self.pages[page_num][byte_offset as usize..(byte_offset + ROW_SIZE) as usize]
     }
 }
