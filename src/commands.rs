@@ -30,16 +30,16 @@ pub enum ExecuteResult {
 
 impl Statement {
 
-    pub fn execute_statement(&self, mut table: &mut Table) -> ExecuteResult {
+    pub fn execute_statement(&self, table: &mut Table) -> ExecuteResult {
 
         match self.statement_type {
             StatementType::StatementInsert => {
                 // println!("This is where we are doing an insert");
-                self.execute_insert(&mut table)
+                self.execute_insert(table)
             },
             StatementType::StatementSelect => {
                 // println!("This is where we are doing a select");
-                self.execute_select(&mut table)
+                self.execute_select(table)
             },
             StatementType::None => ExecuteResult::None
         }
@@ -61,10 +61,11 @@ impl Statement {
     pub fn execute_select(&self, table: &mut Table) -> ExecuteResult {
 
         let mut row = Row::new(1, "", "").unwrap();
+        println!("Rows: \r");
         for row_num in 0..table.num_rows {
             let source = table.row_slot(row_num);
-            let new_row = row.deserialize_row(&source).unwrap();
-            println!("{:?}", new_row);
+            let new_row = row.deserialize_row(source).unwrap();
+            println!("{}", new_row);
         }
 
         // println!("{:?}", table.pages);
