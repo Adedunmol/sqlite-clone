@@ -34,18 +34,18 @@ impl Statement {
 
         match self.statement_type {
             StatementType::StatementInsert => {
-                println!("This is where we are doing an insert");
+                // println!("This is where we are doing an insert");
                 self.execute_insert(&mut table)
             },
             StatementType::StatementSelect => {
-                println!("This is where we are doing a select");
+                // println!("This is where we are doing a select");
                 self.execute_select(&mut table)
             },
             StatementType::None => ExecuteResult::None
         }
     }
 
-    pub fn execute_insert(&self, mut table: &mut Table) -> ExecuteResult {
+    pub fn execute_insert(&self, table: &mut Table) -> ExecuteResult {
         if table.num_rows >= TABLE_MAX_ROWS {
             return ExecuteResult::ExecuteTableFull
         }
@@ -58,7 +58,7 @@ impl Statement {
         ExecuteResult::ExecuteSuccess
     }
 
-    pub fn execute_select(&self, mut table: &mut Table) -> ExecuteResult {
+    pub fn execute_select(&self, table: &mut Table) -> ExecuteResult {
 
         let mut row = Row::new(1, "", "").unwrap();
         for row_num in 0..table.num_rows {

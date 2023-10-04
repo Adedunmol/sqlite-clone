@@ -62,6 +62,26 @@ impl Row {
 
         Ok( Self { id, username, email } )
     }
+
+    pub fn set_username(&mut self, value: String) -> Result<()> {
+        if value.len() > USERNAME_SIZE as usize {
+            return Err("username is longer than 32".into())
+        }
+
+        self.username = value;
+
+        Ok(())
+    }
+
+    pub fn set_email(&mut self, value: String) -> Result<()> {
+        if value.len() >  EMAIL_SIZE as usize {
+            return Err("email is longer than 255".into())
+        }
+
+        self.email = value;
+
+        Ok(())
+    }
 }
 
 impl fmt::Display for Row {
