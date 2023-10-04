@@ -35,7 +35,7 @@ impl Table {
 
         let row_offset: u32 = row_num % ROWS_PER_PAGE;
         let byte_offset: u32 = row_offset * ROW_SIZE;
-        println!("row_off: {}, byte_offset: {}", row_offset, byte_offset);
+        // println!("row_off: {}, byte_offset: {}", row_offset, byte_offset);
         &mut self.pages[page_num][byte_offset as usize..(byte_offset + ROW_SIZE) as usize]
     }
 }

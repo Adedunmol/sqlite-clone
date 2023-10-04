@@ -59,14 +59,15 @@ impl Statement {
     }
 
     pub fn execute_select(&self, mut table: &mut Table) -> ExecuteResult {
-        println!("{}", table.num_rows);
+
         let mut row = Row::new(1, "", "").unwrap();
         for row_num in 0..table.num_rows {
-            row.deserialize_row(table.row_slot(row_num));
-            println!("{:#?}", row);
+            let source = table.row_slot(row_num);
+            let new_row = row.deserialize_row(&source).unwrap();
+            println!("{:?}", new_row);
         }
 
-        println!("{:?}", table.pages);
+        // println!("{:?}", table.pages);
 
         ExecuteResult::ExecuteSuccess
     }

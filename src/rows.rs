@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::Result;
 
 const ID_SIZE: u32 = 4;
@@ -53,11 +55,18 @@ impl Row {
             return Err("cannot deserialize row".into())
         }
 
-        let id = u32::from_le_bytes(source[ID_OFFSET as usize..ID_OFFSET as usize + ID_SIZE as usize].try_into().unwrap());
-        let username = String::from_utf8_lossy(&source[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize]).to_string(); // .trim_end_matches(char::from(0)).
-        let email = String::from_utf8_lossy(&source[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize]).to_string(); // .trim_end_matches(char::from(0)).
+        let id = u32::from_be_bytes(source[ID_OFFSET as usize..ID_OFFSET as usize + ID_SIZE as usize].try_into().unwrap());
+        let username = String::from_utf8_lossy(&source[USERNAME_OFFSET as usize..(USERNAME_OFFSET + USERNAME_SIZE) as usize]).trim_end_matches(char::from(0)).to_string();
+        let email = String::from_utf8_lossy(&source[EMAIL_OFFSET as usize..(EMAIL_OFFSET + EMAIL_SIZE) as usize]).trim_end_matches(char::from(0)).to_string();
 
 
         Ok( Self { id, username, email } )
+    }
+}
+
+impl fmt::Display for Row {
+
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Row ({}, {}, {})", self.id,  self.username, self.email)
     }
 }
