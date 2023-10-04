@@ -1,5 +1,5 @@
 use std::{io::{self, Write}, process};
-use crate::{Result, commands::{MetaCommandResult, Statement, StatementType, PrepareResult}};
+use crate::{Result, Statement, commands::{MetaCommandResult, StatementType, PrepareResult}};
 
 pub struct InputBuffer {
     pub buffer: String,
@@ -59,7 +59,15 @@ impl InputBuffer {
 
             match sscanf::sscanf!(input, "insert {usize} {str} {str}") {
                 Ok((id, username, email)) => {
-                    statement.row_to_insert.id = id as u32;
+                    // statement.row_to_insert.id = id as u32;
+                    match statement.row_to_insert.set_id(id) {
+                        Ok(()) => (),
+                        Err(err) => { 
+                            println!("Error: {}", err);
+                            return PrepareResult::PrepareSyntaxError
+                        }
+                    }
+
                     // statement.row_to_insert.username = username.to_string();
                     match statement.row_to_insert.set_username(username.to_string()) {
                         Ok(()) => (),

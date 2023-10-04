@@ -12,9 +12,9 @@ pub const ROW_SIZE: u32 = ID_SIZE + USERNAME_SIZE + EMAIL_SIZE;
 
 #[derive(Debug)]
 pub struct Row {
-    pub id: u32,
-    pub username: String,
-    pub email: String,
+    id: u32,
+    username: String,
+    email: String,
 }
 
 impl Row {
@@ -82,11 +82,17 @@ impl Row {
 
         Ok(())
     }
+
+    pub fn set_id(&mut self, value: usize) -> Result<()> {
+        self.id = value.try_into().unwrap();
+
+        Ok(())
+    }
 }
 
 impl fmt::Display for Row {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Row ({}, {}, {})", self.id,  self.username, self.email)
+        write!(f, "({}, {}, {})", self.id,  self.username, self.email)
     }
 }

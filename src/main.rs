@@ -1,14 +1,15 @@
 use std::process;
 
-use commands::{Statement, ExecuteResult};
+use commands::ExecuteResult;
 use repl::InputBuffer;
 
-use crate::rows::Row;
+use crate::{rows::Row, statement::Statement};
 
 mod repl;
 mod commands;
 mod rows;
 mod tables;
+mod statement;
 
 pub type Err = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Err>;
@@ -45,7 +46,7 @@ fn main() {
         let result = input_buffer.prepare_statement(&mut statement);
 
         if let commands::PrepareResult::PrepareSuccess = result {
-            println!("statement has been parsed successfully");
+            // println!("statement has been parsed successfully");
             // continue;
         } else if let commands::PrepareResult::PrepareUnrecognizedStatement = result {
             println!("Unrecognized keyword at the start of \"{}\".", input_buffer.get_buffer());
@@ -57,11 +58,11 @@ fn main() {
 
         match statement.execute_statement(&mut table) {
             ExecuteResult::ExecuteSuccess => {
-                println!("Executed\r");
+                println!("Executed.\r");
                 continue;
             },
             ExecuteResult::ExecuteTableFull => {
-                println!("Error: Table full\r");
+                println!("Error: Table full.\r");
                 break;
             },
             ExecuteResult::None => ()
