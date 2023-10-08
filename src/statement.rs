@@ -1,8 +1,6 @@
 use crate::{commands::{StatementType, ExecuteResult}, rows::Row, tables::{Table, TABLE_MAX_ROWS}};
 
 
-
-
 pub struct Statement {
     pub statement_type: StatementType,
     pub row_to_insert: Row
