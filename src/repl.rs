@@ -64,7 +64,7 @@ impl InputBuffer {
                         Ok(()) => (),
                         Err(err) => { 
                             println!("Error: {}", err);
-                            return PrepareResult::PrepareSyntaxError
+                            return PrepareResult::PrepareNegativeId
                         }
                     }
 
@@ -73,7 +73,7 @@ impl InputBuffer {
                         Ok(()) => (),
                         Err(err) => { 
                             println!("Error: {}", err);
-                            return PrepareResult::PrepareSyntaxError
+                            return PrepareResult::PrepareStringTooLong
                         }
                     }
 
@@ -82,7 +82,7 @@ impl InputBuffer {
                         Ok(()) => (),
                         Err(err) => { 
                             println!("Error: {}", err);
-                            return PrepareResult::PrepareSyntaxError
+                            return PrepareResult::PrepareStringTooLong
                         }
                     }
                     

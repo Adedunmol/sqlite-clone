@@ -54,6 +54,12 @@ fn main() {
         } else if let commands::PrepareResult::PrepareSyntaxError = result {
             println!("Syntax error. Could not parse statement.\r");
             continue;
+        } else if let commands::PrepareResult::PrepareStringTooLong = result {
+            println!("String too long.\r");
+            continue;
+        } else if let commands::PrepareResult::PrepareNegativeId = result {
+            println!("ID must be positive.\r");
+            continue;
         }
 
         match statement.execute_statement(&mut table) {

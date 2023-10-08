@@ -1,4 +1,3 @@
-use crate::{rows::Row, tables::{Table, TABLE_MAX_ROWS}};
 pub enum MetaCommandResult {
     MetaCommandSuccess,
     MetaCommandUnrecognizedCommand
@@ -8,7 +7,9 @@ pub enum MetaCommandResult {
 pub enum PrepareResult {
     PrepareSuccess,
     PrepareUnrecognizedStatement,
-    PrepareSyntaxError
+    PrepareSyntaxError,
+    PrepareStringTooLong,
+    PrepareNegativeId
 }
 
 pub enum StatementType {
